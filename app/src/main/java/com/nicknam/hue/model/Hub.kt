@@ -2,6 +2,7 @@ package com.nicknam.hue.model
 
 import android.content.Context
 import com.android.volley.Request
+import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
@@ -12,14 +13,21 @@ import org.json.JSONObject
 /**
  * Created by snick on 15-11-2017.
  */
-class Hub private constructor(ipAddress: String, context: Context) {
+class Hub private constructor() {
     var Lights: List<Light> = ArrayList()
         private set
     var Groups: List<Group> = ArrayList()
         private set
-    private val _requestQueue = Volley.newRequestQueue(context)
-    private val _baseUrl = "https://$ipAddress/api"
-    private lateinit var _username: String
+    private lateinit var _requestQueue: RequestQueue
+    private var _ipAddress: String = "0.0.0.0"
+    private var _baseUrl = "http://$_ipAddress/api"
+    lateinit var Username: String
+
+    fun init(ipAddress: String, context: Context) {
+        _ipAddress = ipAddress
+        _baseUrl = "http://$_ipAddress/api"
+        _requestQueue = Volley.newRequestQueue(context)
+    }
 
     fun createUser(devicetype: String, listener: CreateUserListener) {
         val body = JSONObject()
@@ -27,7 +35,7 @@ class Hub private constructor(ipAddress: String, context: Context) {
         val request = JsonObjectArrayRequest(Request.Method.POST, _baseUrl, body, Response.Listener {
             try {
                 val username = it.getJSONObject(0).getJSONObject("success").getString("username")
-                _username = username
+                Username = username
                 listener.onSuccessful(username)
             } catch (e: JSONException) {
                 listener.onFailed()
@@ -37,7 +45,7 @@ class Hub private constructor(ipAddress: String, context: Context) {
     }
 
     fun updateAllLights(listener: RequestListener) {
-        val request = JsonObjectRequest(Request.Method.GET, "$_baseUrl/$_username/Lights", null, Response.Listener { it ->
+        val request = JsonObjectRequest(Request.Method.GET, "$_baseUrl/$Username/lights", null, Response.Listener { it ->
             try {
                 val lights = ArrayList<Light>()
                 it.keys().forEach { l -> lights.add(Light.createFromJson(it.getJSONObject(l), l.toInt())) }
@@ -53,7 +61,7 @@ class Hub private constructor(ipAddress: String, context: Context) {
     }
 
     fun updateAllGroups(listener: RequestListener) {
-        val request = JsonObjectRequest(Request.Method.GET, "$_baseUrl/$_username/Groups", null, Response.Listener { it ->
+        val request = JsonObjectRequest(Request.Method.GET, "$_baseUrl/$Username/groups", null, Response.Listener { it ->
             val groups = ArrayList<Group>()
             it.keys().forEach { g -> groups.add(Group.createFromJson(it.getJSONObject(g), g.toInt())) }
             Groups = groups
@@ -63,20 +71,17 @@ class Hub private constructor(ipAddress: String, context: Context) {
     }
 
     fun commitLightState(light: Light, listener: State.CommitResultListener) {
-        light.state.commit(_requestQueue, "$_baseUrl/$_username/Lights/${light.nr}/state", listener)
+        light.state.commit(_requestQueue, "$_baseUrl/$Username/Lights/${light.nr}/state", listener)
     }
 
     fun commitGroupState(group: Group, listener: State.CommitResultListener) {
-        group.action.commit(_requestQueue, "$_baseUrl/$_username/Groups/${group.nr}/action", listener)
+        group.state.commit(_requestQueue, "$_baseUrl/$Username/Groups/${group.nr}/state", listener)
     }
 
     companion object {
-        @Volatile private var INSTANCE: Hub? = null
+        private var INSTANCE: Hub = Hub()
 
-        fun getInstance(ipAddress: String, context: Context): Hub =
-                INSTANCE ?: synchronized(this) {
-                    INSTANCE ?: Hub(ipAddress, context).also { INSTANCE = it }
-                }
+        fun getInstance(): Hub = INSTANCE
     }
 
     interface CreateUserListener {

@@ -13,7 +13,7 @@ fun JSONArray.asIntList(): List<Int> {
     val l = ArrayList<Int>(this.length())
     for (i in 0 until this.length()) {
         try {
-            l[i] = this[i] as? Int ?: (this.getString(i)).toInt()
+            l.add(i, this[i] as? Int ?: (this.getString(i)).toInt())
         } catch (e: JSONException) {
             throw NumberFormatException()
         }
@@ -25,7 +25,7 @@ fun JSONArray.asFloatList(): List<Float> {
     val l = ArrayList<Float>(this.length())
     for (i in 0 until this.length()) {
         try {
-            l[i] = this[i] as? Float ?: (this.getString(i)).toFloat()
+            l.add(i, this[i] as? Float ?: (this.getString(i)).toFloat())
         } catch (e: JSONException) {
             throw NumberFormatException()
         }

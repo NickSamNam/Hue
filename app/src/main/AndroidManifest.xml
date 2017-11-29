@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,8 +17,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HueActivity"
-            android:label="@string/title_activity_hue"></activity>
+            android:name=".view.HueActivity"
+            android:label="@string/title_activity_hue" />
     </application>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
 
 </manifest>

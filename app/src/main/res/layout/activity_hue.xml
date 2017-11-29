@@ -5,10 +5,10 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nicknam.hue.HueActivity">
+    tools:context="com.nicknam.hue.view.HueActivity">
 
     <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
+        android:id="@+id/activity_hue_nav_navigation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="0dp"
@@ -20,10 +20,10 @@
         app:menu="@menu/navigation" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/activity_hue_rv_stateable"
+        android:id="@+id/activity_hue_rv_controllable"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/navigation"
+        app:layout_constraintBottom_toTopOf="@+id/activity_hue_nav_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

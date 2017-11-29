@@ -11,7 +11,7 @@ import org.json.JSONObject
  * Created by snick on 17-11-2017.
  */
 
-class State(on: Boolean, bri: Int, hue: Int, sat: Int, xy: List<Float>, ct: Int, alert: Alert, effect: Effect, private val colorMode: ColorMode, private val reachable: Boolean) {
+class State(on: Boolean, bri: Int, hue: Int, sat: Int, xy: List<Float>, ct: Int, alert: Alert, effect: Effect, val colorMode: ColorMode, private val reachable: Boolean) {
     private val _updateRequest: JSONObject = JSONObject()
 
     private var _isOn: Boolean = on
