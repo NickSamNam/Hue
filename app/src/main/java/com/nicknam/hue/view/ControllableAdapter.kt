@@ -26,7 +26,7 @@ class ControllableAdapter(private val controllables: List<IControllable>) : Recy
         holder.switchOn.isChecked = s.state.On
         val commitResultlistener = object : State.CommitResultListener {
             override fun onSuccess() {
-
+                // todo update colour
             }
 
             override fun onFailed() {
@@ -48,7 +48,7 @@ class ControllableAdapter(private val controllables: List<IControllable>) : Recy
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StateableHolder =
-            StateableHolder(LayoutInflater.from(parent.context).inflate(R.layout.card_stateable, parent, false))
+            StateableHolder(LayoutInflater.from(parent.context).inflate(R.layout.card_controllable, parent, false))
 
     override fun getItemCount(): Int = controllables.size
 
