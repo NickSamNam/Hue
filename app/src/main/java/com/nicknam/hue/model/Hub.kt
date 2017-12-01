@@ -14,19 +14,24 @@ import org.json.JSONObject
  * Created by snick on 15-11-2017.
  */
 class Hub private constructor() {
-    var Lights: List<Light> = ArrayList()
+    var Lights: MutableList<Light> = ArrayList()
         private set
-    var Groups: List<Group> = ArrayList()
+    var Groups: MutableList<Group> = ArrayList()
         private set
     private lateinit var _requestQueue: RequestQueue
     private var _ipAddress: String = "0.0.0.0"
     private var _baseUrl = "http://$_ipAddress/api"
     lateinit var Username: String
 
-    fun init(ipAddress: String, context: Context) {
+    fun init(ipAddress: String, context: Context, listener: RequestListener) {
         _ipAddress = ipAddress
         _baseUrl = "http://$_ipAddress/api"
         _requestQueue = Volley.newRequestQueue(context)
+
+        val request = JsonObjectRequest(Request.Method.GET, "$_baseUrl/config", null, Response.Listener {
+            listener.onSuccessful()
+        }, Response.ErrorListener { listener.onFailed() })
+        _requestQueue.add(request)
     }
 
     fun createUser(devicetype: String, listener: CreateUserListener) {
@@ -47,9 +52,8 @@ class Hub private constructor() {
     fun updateAllLights(listener: RequestListener) {
         val request = JsonObjectRequest(Request.Method.GET, "$_baseUrl/$Username/lights", null, Response.Listener { it ->
             try {
-                val lights = ArrayList<Light>()
-                it.keys().forEach { l -> lights.add(Light.createFromJson(it.getJSONObject(l), l.toInt())) }
-                Lights = lights
+                Lights.clear()
+                it.keys().forEach { l -> Lights.add(Light.createFromJson(it.getJSONObject(l), l.toInt())) }
                 listener.onSuccessful()
             } catch (e: JSONException) {
                 listener.onFailed()
@@ -62,9 +66,8 @@ class Hub private constructor() {
 
     fun updateAllGroups(listener: RequestListener) {
         val request = JsonObjectRequest(Request.Method.GET, "$_baseUrl/$Username/groups", null, Response.Listener { it ->
-            val groups = ArrayList<Group>()
-            it.keys().forEach { g -> groups.add(Group.createFromJson(it.getJSONObject(g), g.toInt())) }
-            Groups = groups
+            Groups.clear()
+            it.keys().forEach { g -> Groups.add(Group.createFromJson(it.getJSONObject(g), g.toInt())) }
             listener.onSuccessful()
         }, Response.ErrorListener { listener.onFailed() })
         _requestQueue.add(request)

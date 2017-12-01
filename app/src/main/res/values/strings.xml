@@ -11,4 +11,5 @@
     <string name="error_ipaddr">IP address invalid!</string>
     <string name="error_createUser">User creation failed.</string>
     <string name="error_update_failure">Failed to update.</string>
+    <string name="error_hub_not_found">404: Hub not found.</string>
 </resources>

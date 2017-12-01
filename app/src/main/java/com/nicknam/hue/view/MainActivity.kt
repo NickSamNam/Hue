@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), Hub.CreateUserListener, Hub.RequestListener {
     override fun onFailed() {
-        Toast.makeText(this, R.string.error_update_failure, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, R.string.error_hub_not_found, Toast.LENGTH_SHORT).show()
     }
 
     override fun onSuccessful() {
@@ -35,14 +35,12 @@ class MainActivity : AppCompatActivity(), Hub.CreateUserListener, Hub.RequestLis
             val ipAddr = activity_main_et_ip.text.toString()
             if (Patterns.IP_ADDRESS.matcher(ipAddr).matches()) {
                 val hub = Hub.getInstance()
-                hub.init(ipAddr, applicationContext)
+                hub.init(ipAddr, applicationContext, this)
 
                 val sp = getSharedPreferences("hue", Context.MODE_PRIVATE)
 //
 //                if (sp.contains("username")) {
                 hub.Username = sp.getString("username", "iYrmsQq1wu5FxF9CPqpJCnm1GpPVylKBWDUsNDhB")
-                hub.updateAllGroups(this)
-                hub.updateAllLights(this)
 //                }
 //                else
 //                    hub.createUser("hubbadah", this)

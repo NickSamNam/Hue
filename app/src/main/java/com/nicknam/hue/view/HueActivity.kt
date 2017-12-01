@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.Toast
 import com.nicknam.hue.R
 import com.nicknam.hue.model.Hub
 import kotlinx.android.synthetic.main.activity_hue.*
@@ -34,6 +35,21 @@ class HueActivity : AppCompatActivity(), ControllableAdapter.OnItemClickListener
         activity_hue_rv_controllable.layoutManager = LinearLayoutManager(this)
 
         _hub = Hub.getInstance()
+        val updateResultListener = object : Hub.RequestListener {
+            override fun onSuccessful() {
+                activity_hue_swipeContainer.isRefreshing = false
+                activity_hue_rv_controllable.adapter.notifyDataSetChanged()
+            }
+
+            override fun onFailed() {
+                activity_hue_swipeContainer.isRefreshing = false
+                Toast.makeText(this@HueActivity, R.string.error_update_failure, Toast.LENGTH_SHORT).show()
+            }
+        }
+        activity_hue_swipeContainer.setOnRefreshListener {
+            _hub.updateAllLights(updateResultListener)
+            _hub.updateAllGroups(updateResultListener)
+        }
 
         var contrAdapter: ControllableAdapter? = null
 
