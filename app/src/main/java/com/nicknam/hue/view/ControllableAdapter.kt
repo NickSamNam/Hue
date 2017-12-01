@@ -26,7 +26,7 @@ class ControllableAdapter(private val controllables: List<IControllable>) : Recy
         holder.tvName.text = s.name
         holder.switchOn.isChecked = s.state.On
         holder.root.setBackgroundColor(when (s.state.colorMode) {
-            State.ColorMode.hs -> Color.HSVToColor(floatArrayOf(s.state.Hue / 65535f, s.state.Saturation / 254f, s.state.Brightness / 254f))
+            State.ColorMode.hs -> Color.HSVToColor(floatArrayOf(s.state.Hue / 182.0416666666667f, s.state.Saturation / 254f, s.state.Brightness / 254f))
             State.ColorMode.xy -> Color.WHITE
             State.ColorMode.ct -> Color.WHITE
         })
