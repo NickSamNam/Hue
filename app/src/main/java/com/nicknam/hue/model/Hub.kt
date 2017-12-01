@@ -74,11 +74,11 @@ class Hub private constructor() {
     }
 
     fun commitLightState(light: Light, listener: State.CommitResultListener) {
-        light.state.commit(_requestQueue, "$_baseUrl/$Username/Lights/${light.nr}/state", listener)
+        light.state.commit(_requestQueue, "$_baseUrl/$Username/lights/${light.nr}/state", listener)
     }
 
     fun commitGroupState(group: Group, listener: State.CommitResultListener) {
-        group.state.commit(_requestQueue, "$_baseUrl/$Username/Groups/${group.nr}/state", listener)
+        group.state.commit(_requestQueue, "$_baseUrl/$Username/groups/${group.nr}/state", listener)
     }
 
     companion object {

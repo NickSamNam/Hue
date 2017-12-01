@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
 import com.nicknam.hue.R
-import com.nicknam.hue.model.IControllable
-import com.nicknam.hue.model.State
+import com.nicknam.hue.model.*
 
 /**
  * Created by snick on 25-11-2017.
@@ -25,6 +24,21 @@ class ControllableAdapter(private val controllables: List<IControllable>) : Recy
         val s = controllables[position]
         holder.tvName.text = s.name
         holder.switchOn.isChecked = s.state.On
+        val commitResultlistener = object : State.CommitResultListener {
+            override fun onSuccess() {
+
+            }
+
+            override fun onFailed() {
+                holder.switchOn.isChecked = !holder.switchOn.isChecked
+            }
+
+        }
+        holder.switchOn.setOnClickListener { controllables[position].state.On = holder.switchOn.isChecked
+        when(controllables[position]) {
+            is Light -> Hub.getInstance().commitLightState(controllables[position] as Light, commitResultlistener)
+            is Group -> Hub.getInstance().commitGroupState(controllables[position] as Group, commitResultlistener)
+        }}
         holder.root.setBackgroundColor(when (s.state.colorMode) {
             State.ColorMode.hs -> Color.HSVToColor(floatArrayOf(s.state.Hue / 182.0416666666667f, s.state.Saturation / 254f, s.state.Brightness / 254f))
             State.ColorMode.xy -> Color.WHITE
