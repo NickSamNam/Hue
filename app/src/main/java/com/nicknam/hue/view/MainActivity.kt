@@ -24,30 +24,35 @@ class MainActivity : AppCompatActivity(), Hub.CreateUserListener, Hub.RequestLis
         nextActivity()
     }
 
-//    override fun onFailed() {
-//        Toast.makeText(this, R.string.error_createUser, Toast.LENGTH_LONG).show()
-//    }
+    override fun onCreationFailed() {
+        Toast.makeText(this, R.string.error_createUser, Toast.LENGTH_LONG).show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val sp = getSharedPreferences("hue", Context.MODE_PRIVATE)
+
         activity_main_btn_confirm.setOnClickListener {
             val ipAddr = activity_main_et_ip.text.toString()
             if (Patterns.IP_ADDRESS.matcher(ipAddr).matches()) {
                 val hub = Hub.getInstance()
                 hub.init(ipAddr, applicationContext, this)
 
-                val sp = getSharedPreferences("hue", Context.MODE_PRIVATE)
-//
-//                if (sp.contains("username")) {
-                hub.Username = sp.getString("username", "iYrmsQq1wu5FxF9CPqpJCnm1GpPVylKBWDUsNDhB")
-//                }
-//                else
-//                    hub.createUser("hubbadah", this)
+                if (ipAddr == "145.48.205.33")
+                    hub.Username = "iYrmsQq1wu5FxF9CPqpJCnm1GpPVylKBWDUsNDhB"
+                else {
+                    if (sp.contains("username")) {
+                        hub.Username = sp.getString("username", "")
+                    } else
+                        hub.createUser(application.packageName, this)
+                }
             } else {
                 Toast.makeText(this, R.string.error_ipaddr, Toast.LENGTH_SHORT).show()
             }
         }
+
+        activity_main_btn_reset.setOnClickListener({ sp.edit().clear().apply() })
     }
 
     private fun nextActivity() {

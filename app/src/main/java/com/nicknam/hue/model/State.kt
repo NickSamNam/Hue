@@ -5,6 +5,7 @@ import com.android.volley.RequestQueue
 import com.android.volley.Response
 import com.nicknam.hue.util.JsonObjectArrayRequest
 import com.nicknam.hue.util.asFloatList
+import org.json.JSONException
 import org.json.JSONObject
 
 /**
@@ -98,8 +99,8 @@ class State(on: Boolean, bri: Int, hue: Int, sat: Int, xy: List<Float>, ct: Int,
                 sat = src.getInt("sat"),
                 xy = src.getJSONArray("xy").asFloatList(),
                 ct = src.getInt("ct"),
-                alert = Alert.valueOf(src.getString("alert")),
-                effect = Effect.valueOf(src.getString("effect")),
+                alert = try {Alert.valueOf(src.getString("alert"))} catch (e: JSONException) {Alert.none},
+                effect = try {Effect.valueOf(src.getString("effect"))} catch (e: JSONException) {Effect.none},
                 colorMode = ColorMode.valueOf(src.getString("colormode")),
                 reachable = true
         )

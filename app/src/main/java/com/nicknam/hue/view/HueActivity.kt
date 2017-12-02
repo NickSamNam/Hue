@@ -8,9 +8,12 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
 import com.nicknam.hue.R
 import com.nicknam.hue.model.Hub
+import com.nicknam.hue.model.IControllable
 import kotlinx.android.synthetic.main.activity_hue.*
 
 class HueActivity : AppCompatActivity(), ControllableAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, Hub.RequestListener {
+    private lateinit var controllables: List<IControllable>
+
     override fun onSuccessful() {
         activity_hue_swipeContainer.isRefreshing = false
         activity_hue_rv_controllable.adapter.notifyDataSetChanged()
@@ -32,11 +35,13 @@ class HueActivity : AppCompatActivity(), ControllableAdapter.OnItemClickListener
         var result = false
         when (item.itemId) {
             R.id.navigation_lamps -> {
+                controllables = _hub.Lights
                 _hub.updateAllLights(this)
                 contrAdapter = ControllableAdapter(_hub.Lights)
                 result = true
             }
             R.id.navigation_groups -> {
+                controllables = _hub.Groups
                 _hub.updateAllGroups(this)
                 contrAdapter = ControllableAdapter(_hub.Groups)
                 result = true
@@ -56,26 +61,33 @@ class HueActivity : AppCompatActivity(), ControllableAdapter.OnItemClickListener
 
         activity_hue_swipeContainer.setOnRefreshListener(this)
 
-        var contrAdapter: ControllableAdapter? = null
 
-        if (activity_hue_nav_navigation.selectedItemId == R.id.navigation_lamps) {
-            contrAdapter = ControllableAdapter(_hub.Lights)
-            if (savedInstanceState == null)
-                _hub.updateAllLights(this)
-        }
-        else if (activity_hue_nav_navigation.selectedItemId == R.id.navigation_groups) {
-            contrAdapter = ControllableAdapter(_hub.Groups)
-            if (savedInstanceState == null)
-                _hub.updateAllGroups(this)
-        }
+        when (activity_hue_nav_navigation.selectedItemId) {
+            R.id.navigation_groups -> {
+                controllables = _hub.Groups
+                if (savedInstanceState == null)
+                    _hub.updateAllGroups(this)
+            }
 
+            else -> {
+                controllables = _hub.Lights
+                if (savedInstanceState == null)
+                    _hub.updateAllLights(this)
+            }
+        }
+        val contrAdapter: ControllableAdapter = ControllableAdapter(controllables)
         activity_hue_nav_navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-
-        contrAdapter?.setOnItemClickListener(this)
+        contrAdapter.setOnItemClickListener(this)
         activity_hue_rv_controllable.adapter = contrAdapter
     }
 
     override fun onItemClick(position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val args = Bundle()
+        args.putInt("nr", controllables[position].nr)
+        args.putString("name", controllables[position].name)
+        val controllableDialogFragment = ControllableDialogFragment()
+        controllableDialogFragment.arguments = args
+        controllableDialogFragment.isCancelable = false
+        controllableDialogFragment.show(fragmentManager, "controllable")
     }
 }

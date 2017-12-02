@@ -9,6 +9,7 @@ import android.widget.Switch
 import android.widget.TextView
 import com.nicknam.hue.R
 import com.nicknam.hue.model.*
+import com.nicknam.hue.util.fromPhilipsHSB
 
 /**
  * Created by snick on 25-11-2017.
@@ -40,7 +41,7 @@ class ControllableAdapter(private val controllables: List<IControllable>) : Recy
             is Group -> Hub.getInstance().commitGroupState(controllables[position] as Group, commitResultlistener)
         }}
         holder.root.setBackgroundColor(when (s.state.colorMode) {
-            State.ColorMode.hs -> Color.HSVToColor(floatArrayOf(s.state.Hue / 182.0416666666667f, s.state.Saturation / 254f, s.state.Brightness / 254f))
+            State.ColorMode.hs -> Color().fromPhilipsHSB(s.state.Hue, s.state.Saturation, s.state.Brightness)
             State.ColorMode.xy -> Color.WHITE
             State.ColorMode.ct -> Color.WHITE
         })

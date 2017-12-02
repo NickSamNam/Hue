@@ -5,7 +5,8 @@ import org.json.JSONObject
 /**
  * Created by snick on 16-11-2017.
  */
-class Light(override val nr: Int, override val state: State, val type: String, override val name: String, modelId: String, val swVersion: String): IControllable {
+class Light(override val nr: Int, override val state: State, val type: String, override val name: String, private val modelId: String, val swVersion: String) : IControllable {
+
     companion object {
         fun createFromJson(src: JSONObject, nr: Int): Light = Light(
                 nr = nr,
@@ -16,4 +17,5 @@ class Light(override val nr: Int, override val state: State, val type: String, o
                 swVersion = src.getString("swversion")
         )
     }
+
 }

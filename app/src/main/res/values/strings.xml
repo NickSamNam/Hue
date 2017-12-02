@@ -12,4 +12,6 @@
     <string name="error_createUser">User creation failed.</string>
     <string name="error_update_failure">Failed to update.</string>
     <string name="error_hub_not_found">404: Hub not found.</string>
+    <string name="save">Save</string>
+    <string name="reset">Reset</string>
 </resources>

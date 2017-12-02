@@ -43,9 +43,9 @@ class Hub private constructor() {
                 Username = username
                 listener.onSuccessful(username)
             } catch (e: JSONException) {
-                listener.onFailed()
+                listener.onCreationFailed()
             }
-        }, Response.ErrorListener { listener.onFailed() })
+        }, Response.ErrorListener { listener.onCreationFailed() })
         _requestQueue.add(request)
     }
 
@@ -89,7 +89,7 @@ class Hub private constructor() {
 
     interface CreateUserListener {
         fun onSuccessful(username: String)
-        fun onFailed()
+        fun onCreationFailed()
     }
 
     interface RequestListener {
